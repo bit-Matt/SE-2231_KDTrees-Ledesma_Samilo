@@ -1,0 +1,10 @@
+{
+  "name": "lab-4-parcel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/p5": "^1.7.6",
+    "p5": "^1.9.0"
+  }
+}
