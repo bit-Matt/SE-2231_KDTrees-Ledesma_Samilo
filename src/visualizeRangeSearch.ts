@@ -10,24 +10,6 @@ import KDTree from "./kdTree";
 const brute = new PointSET();
 const kdTree = new KDTree();
 
-const points = [
-  new Point2D(0.372, 0.497),
-  new Point2D(0.564, 0.413),
-  new Point2D(0.226, 0.577),
-  new Point2D(0.144, 0.179),
-  new Point2D(0.083, 0.51),
-  new Point2D(0.32, 0.708),
-  new Point2D(0.417, 0.362),
-  new Point2D(0.862, 0.825),
-  new Point2D(0.785, 0.725),
-  new Point2D(0.499, 0.208),
-];
-
-for (let point of points) {
-  brute.insert(point);
-  kdTree.insert(point);
-}
-
 let x0 = 0.0,
   y0 = 0.0;
 let x1 = 0.0,
@@ -41,7 +23,26 @@ const padding: number = 25;
 let sketch = function (p: p5) {
   p.setup = function () {
     p.createCanvas(width, height);
+    p.createFileInput(handleFile);
   };
+
+  //file read system
+
+  function handleFile(file: p5.File) {
+    if (file.type === "text") {
+      const lines = file.data.split("\n");
+      for (let line of lines) {
+        const [x, y] = line.split(" ").map(Number);
+        if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
+          const point = new Point2D(x, y);
+          brute.insert(point);
+          kdTree.insert(point);
+        } else {
+          console.error(`Point (${x}, ${y}) is out of bounds`);
+        }
+      }
+    }
+  }
 
   p.mousePressed = function () {
     if (!dragging) {
@@ -75,6 +76,8 @@ let sketch = function (p: p5) {
     p.stroke("black");
     brute.draw(p);
 
+    //how are the colors the hardest part
+
     const rect = new RectHV(
       Math.min(x0, x1),
       Math.min(y0, y1),
@@ -84,8 +87,6 @@ let sketch = function (p: p5) {
     p.strokeWeight(2 / width);
     p.stroke("blue");
     rect.draw(p);
-
-    //why the color be the hardest part tho
 
     p.fill("green");
     p.noStroke();
